@@ -1,16 +1,24 @@
-import { Link, useLocation } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { useState } from "react";
 import { Menu, X } from "lucide-react";
 
 const navLinks = [
-  { path: "/", label: "Home" },
-  { path: "/projects", label: "Projects" },
-  { path: "/contact", label: "Contact" },
+  { path: "#home", label: "Home" },
+  { path: "#about", label: "About" },
+  { path: "#projects", label: "Projects" },
+  { path: "#contact", label: "Contact" },
 ];
 
 const Navbar = () => {
-  const location = useLocation();
   const [isOpen, setIsOpen] = useState(false);
+
+  const handleNavClick = (path: string) => {
+    const element = document.querySelector(path);
+    if (element) {
+      element.scrollIntoView({ behavior: "smooth" });
+    }
+    setIsOpen(false);
+  };
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-b border-border">
@@ -19,6 +27,7 @@ const Navbar = () => {
           {/* Logo */}
           <Link 
             to="/" 
+            onClick={() => handleNavClick("#home")}
             className="font-display font-semibold text-xl text-foreground hover:text-lavender-deep transition-colors"
           >
             Portfolio
@@ -27,17 +36,13 @@ const Navbar = () => {
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center gap-8">
             {navLinks.map((link) => (
-              <Link
+              <button
                 key={link.path}
-                to={link.path}
-                className={`link-underline text-sm font-medium transition-colors ${
-                  location.pathname === link.path
-                    ? "text-foreground"
-                    : "text-muted-foreground hover:text-foreground"
-                }`}
+                onClick={() => handleNavClick(link.path)}
+                className="link-underline text-sm font-medium transition-colors text-muted-foreground hover:text-foreground"
               >
                 {link.label}
-              </Link>
+              </button>
             ))}
           </div>
 
@@ -56,18 +61,13 @@ const Navbar = () => {
           <div className="md:hidden py-4 border-t border-border animate-fade-up">
             <div className="flex flex-col gap-4">
               {navLinks.map((link) => (
-                <Link
+                <button
                   key={link.path}
-                  to={link.path}
-                  onClick={() => setIsOpen(false)}
-                  className={`text-sm font-medium py-2 transition-colors ${
-                    location.pathname === link.path
-                      ? "text-foreground"
-                      : "text-muted-foreground hover:text-foreground"
-                  }`}
+                  onClick={() => handleNavClick(link.path)}
+                  className="text-sm font-medium py-2 transition-colors text-muted-foreground hover:text-foreground text-left"
                 >
                   {link.label}
-                </Link>
+                </button>
               ))}
             </div>
           </div>
