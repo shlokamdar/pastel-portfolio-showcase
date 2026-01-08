@@ -1,8 +1,10 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
-import { ArrowRight, Sparkles, Code, Palette, Lightbulb, Heart } from "lucide-react";
+import { ArrowRight, Sparkles, Code, Palette, Lightbulb, Heart, Mail, MapPin, Send, Github, Linkedin } from "lucide-react";
 import Layout from "@/components/layout/Layout";
 import ProjectCard from "@/components/projects/ProjectCard";
 import { projects } from "@/data/projects";
+import { useToast } from "@/hooks/use-toast";
 
 const skills = [
   { category: "Frontend", items: ["React", "TypeScript", "TailwindCSS", "Next.js"] },
@@ -39,12 +41,33 @@ const values = [
 ];
 
 const Home = () => {
-  const featuredProjects = projects.slice(0, 3);
+  const { toast } = useToast();
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    message: "",
+  });
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    toast({
+      title: "Message sent!",
+      description: "Thank you for reaching out. I'll get back to you soon.",
+    });
+    setFormData({ name: "", email: "", message: "" });
+  };
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    setFormData((prev) => ({
+      ...prev,
+      [e.target.name]: e.target.value,
+    }));
+  };
 
   return (
     <Layout>
       {/* Hero Section */}
-      <section className="gradient-hero min-h-[80vh] flex items-center">
+      <section id="home" className="gradient-hero min-h-[80vh] flex items-center">
         <div className="container mx-auto px-6">
           <div className="max-w-3xl">
             <div className="animate-fade-up">
@@ -73,12 +96,12 @@ const Home = () => {
                 View Projects
                 <ArrowRight size={18} />
               </a>
-              <Link
-                to="/contact"
+              <a
+                href="#contact"
                 className="inline-flex items-center gap-2 px-6 py-3 rounded-full border-2 border-foreground/20 text-foreground font-medium hover:bg-foreground/5 transition-colors"
               >
                 Get in Touch
-              </Link>
+              </a>
             </div>
           </div>
         </div>
@@ -170,41 +193,174 @@ const Home = () => {
         </div>
       </section>
 
-      {/* Featured Projects Section */}
+      {/* Projects Section */}
       <section id="projects" className="py-24 bg-sage/20">
         <div className="container mx-auto px-6">
-          <div className="flex items-end justify-between mb-12">
-            <div>
-              <h2 className="font-display text-3xl md:text-4xl font-bold text-foreground mb-2">
-                Featured Projects
-              </h2>
-              <p className="text-muted-foreground">
-                A selection of my recent work
-              </p>
-            </div>
-            <Link 
-              to="/projects" 
-              className="hidden md:flex items-center gap-2 text-sm font-medium text-lavender-deep hover:text-foreground transition-colors"
-            >
-              View All
-              <ArrowRight size={16} />
-            </Link>
+          <div className="text-center mb-12">
+            <h2 className="font-display text-3xl md:text-4xl font-bold text-foreground mb-2">
+              Projects
+            </h2>
+            <p className="text-muted-foreground">
+              A collection of projects I've worked on
+            </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {featuredProjects.map((project, index) => (
+            {projects.map((project, index) => (
               <ProjectCard key={project.id} project={project} index={index} />
             ))}
           </div>
 
-          <div className="mt-8 text-center md:hidden">
-            <Link 
-              to="/projects" 
-              className="inline-flex items-center gap-2 text-sm font-medium text-lavender-deep hover:text-foreground transition-colors"
-            >
-              View All Projects
-              <ArrowRight size={16} />
-            </Link>
+          {projects.length === 0 && (
+            <div className="text-center py-16">
+              <p className="text-muted-foreground">No projects yet. Check back soon!</p>
+            </div>
+          )}
+        </div>
+      </section>
+
+      {/* Contact Section */}
+      <section id="contact" className="py-24 bg-peach/20">
+        <div className="container mx-auto px-6">
+          <div className="text-center mb-12">
+            <h2 className="font-display text-3xl md:text-4xl font-bold text-foreground mb-2">
+              Get in Touch
+            </h2>
+            <p className="text-muted-foreground">
+              Have a project in mind or just want to say hello?
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 max-w-5xl mx-auto">
+            {/* Contact Info */}
+            <div className="space-y-8">
+              <div>
+                <h3 className="font-display text-2xl font-semibold text-foreground mb-6">
+                  Let's Connect
+                </h3>
+                <p className="text-muted-foreground mb-8">
+                  Whether you're looking to collaborate on a project, have a question, 
+                  or just want to chat about technology and design, I'm always happy to connect.
+                </p>
+              </div>
+
+              {/* Contact Details */}
+              <div className="space-y-4">
+                <a
+                  href="mailto:hello@example.com"
+                  className="flex items-center gap-4 p-4 rounded-2xl bg-lavender/20 hover:bg-lavender/30 transition-colors"
+                >
+                  <div className="p-3 rounded-xl bg-lavender/50">
+                    <Mail size={20} className="text-foreground" />
+                  </div>
+                  <div>
+                    <p className="text-sm text-muted-foreground">Email</p>
+                    <p className="font-medium text-foreground">hello@example.com</p>
+                  </div>
+                </a>
+
+                <div className="flex items-center gap-4 p-4 rounded-2xl bg-sage/20">
+                  <div className="p-3 rounded-xl bg-sage/50">
+                    <MapPin size={20} className="text-foreground" />
+                  </div>
+                  <div>
+                    <p className="text-sm text-muted-foreground">Location</p>
+                    <p className="font-medium text-foreground">San Francisco, CA</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Social Links */}
+              <div>
+                <h4 className="font-display font-semibold text-foreground mb-4">
+                  Find me online
+                </h4>
+                <div className="flex gap-3">
+                  <a
+                    href="https://github.com"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="p-3 rounded-xl bg-lavender/30 hover:bg-lavender/50 transition-colors"
+                    aria-label="GitHub"
+                  >
+                    <Github size={20} className="text-foreground" />
+                  </a>
+                  <a
+                    href="https://linkedin.com"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="p-3 rounded-xl bg-baby-blue/30 hover:bg-baby-blue/50 transition-colors"
+                    aria-label="LinkedIn"
+                  >
+                    <Linkedin size={20} className="text-foreground" />
+                  </a>
+                </div>
+              </div>
+            </div>
+
+            {/* Contact Form */}
+            <div className="pastel-card hover:shadow-card hover:translate-y-0">
+              <h3 className="font-display text-2xl font-semibold text-foreground mb-6">
+                Send a Message
+              </h3>
+              <form onSubmit={handleSubmit} className="space-y-6">
+                <div>
+                  <label htmlFor="name" className="block text-sm font-medium text-foreground mb-2">
+                    Name
+                  </label>
+                  <input
+                    type="text"
+                    id="name"
+                    name="name"
+                    value={formData.name}
+                    onChange={handleChange}
+                    required
+                    className="w-full px-4 py-3 rounded-xl border border-border bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-lavender-deep/50 transition-all"
+                    placeholder="Your name"
+                  />
+                </div>
+
+                <div>
+                  <label htmlFor="email" className="block text-sm font-medium text-foreground mb-2">
+                    Email
+                  </label>
+                  <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleChange}
+                    required
+                    className="w-full px-4 py-3 rounded-xl border border-border bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-lavender-deep/50 transition-all"
+                    placeholder="your@email.com"
+                  />
+                </div>
+
+                <div>
+                  <label htmlFor="message" className="block text-sm font-medium text-foreground mb-2">
+                    Message
+                  </label>
+                  <textarea
+                    id="message"
+                    name="message"
+                    value={formData.message}
+                    onChange={handleChange}
+                    required
+                    rows={5}
+                    className="w-full px-4 py-3 rounded-xl border border-border bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-lavender-deep/50 transition-all resize-none"
+                    placeholder="Tell me about your project or just say hi..."
+                  />
+                </div>
+
+                <button
+                  type="submit"
+                  className="w-full flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-foreground text-background font-medium hover:bg-foreground/90 transition-colors"
+                >
+                  <Send size={18} />
+                  Send Message
+                </button>
+              </form>
+            </div>
           </div>
         </div>
       </section>
